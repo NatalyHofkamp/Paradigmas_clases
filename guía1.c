@@ -568,3 +568,119 @@ double
 ¿Cuál es el tamaño, en bytes, de cada uno y cuáles son sus valores máximos y mínimos?
 
 ¿Cuáles, si alguno, pueden tener un tamaño diferente? ¿De qué depende el cambio? todavía no llegamos a esto :p/*
+
+
+/*                                          ARREGLOS
+
+1)Un arreglo de enteros con 15 elementos, todos ellos de valor 0.*/
+int arreglito (int);
+
+void main(void){
+    arreglito(5);
+    arreglito(15);
+}
+
+int arreglito(int len){
+
+    int arreglo[len];
+    int i;
+    for (i=0;i<len;++i){
+        arreglo[i]=0;
+        printf("%i",arreglo[i]);
+    }
+    
+}
+
+/* 2)Un arreglo de 7 doubles, todos ellos de valor 3.0. */
+
+int arreglito (int);
+
+void main(void){
+    arreglito(7);
+}
+
+int arreglito(int len){
+    double arreglo[len];
+    int i;
+    for (i=0;i<len;++i){
+        arreglo[i]=0.3;
+        printf("%.1f\n",arreglo[i]);
+    }
+    
+}
+
+/* 3)Un arreglo con SIZE elementos de 
+algún tipo (bool, int, float, double, etc) y lo inicialice con valores aleatorios.*/
+int arreglito (int);
+
+void main(void){
+    arreglito(7);
+}
+
+int arreglito(int len){
+    srand(time(NULL));
+    double arreglo[len];
+    int i;
+    int b;
+    
+    for (i=0;i<len;++i){
+        b = rand() % 11;
+        arreglo[i]=b;
+        printf("%.1f\n",arreglo[i]);
+    }
+    
+}
+/* 2) Escribir ciclos que realicen cada una de las siguientes operaciones:
+
+a)Inicializar un vector de 10 elementos con ceros.*/
+int arreglito (int);
+
+void main(void){
+    arreglito(10);
+}
+
+int arreglito(int len){
+    int arreglo [] = {0,0,0,0,0,0,0,0,0,0};
+    int i;
+    for (i=0;i<len;++i){
+        printf("%i",arreglo[i]);
+    }
+    
+}
+
+/* Sumar 1 a cada uno de los 15 elementos del arreglo vector.*/
+int arreglito (int);
+
+void main(void){
+    arreglito(10);
+}
+
+int arreglito(int len){
+    int arreglo [] = {0,0,0,0,0,0,0,0,0,0};
+    int i;
+    for (i=0;i<len;++i){
+        arreglo[i]+=1;
+        printf("%i",arreglo[i]);
+    }
+    
+}
+
+/*Leer del teclado y almacenar 12 valores de punto flotante en el arreglo temp_mensuales.*/
+
+
+int arreglito (int);
+
+void main(void){
+    arreglito(10);
+}
+
+int arreglito(int size){
+    float temp_mensuales [size];
+    int i;
+    for (i=0;i<size;i+=1){
+        temp_mensuales[i]=0.5;
+        printf("%.1f",temp_mensuales[i]);
+    }
+    
+}
+
