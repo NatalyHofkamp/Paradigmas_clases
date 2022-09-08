@@ -85,19 +85,22 @@ if (ldest==lorig){
 
 }
 int maxNum (int *a,int longi){
-  int max=0;
-  int min =0;
-  for(int i=0;i<longi-1;i++){
-    if (*(a+i)>*(a+i+1)){
-      max+=*(a+i);
-      min+=*(a+i+1);
+  int max ,min = a[0];
+  for(int i=0;i<longi;i++){
+    if (*(a+i)>max){
+      max=*(a+i);
     }
-    else{
-      max=*(a+i+1);
+    if (*(a+i)<=min ){
       min=*(a+i);
     }
   }
   printf("max : %i, min =%i \n",max,min);
+} 
+int main (void){
+  int a[5]= {5,1,6,4,8};
+  int longi =sizeof(a) /sizeof(a[0]);
+  maxNum(a,longi);
+
 }
 int varianza(int sum, int media, int *a, int longi){
   int nose=0;
