@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "PRUEBA.C": "cpp"
+        "PRUEBA.C": "cpp",
+        "iostream": "cpp"
     }
 }

@@ -1,37 +1,33 @@
-/*Implementar una función que retorne una matriz dinámica, de un tamaño pasado como argumento, 
-siendo la misma inicializada con:
-
--> ceros,
--> unos,
--> la identidad,
--> números aleatorios.
-
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
+#include <time.h>
+/*4. La función [strdup recibe una cadena de caracteres y devuelve una copia de la misma utilizando memoria
+dinámica. Implemente dicha función, con el siguiente prototipo:
 
-char* copyString (char[]);
+char *strdup(char *);*/
 
-int main (void){
-  char *copy;
-  copy =copyString("Holiwis");
-  free(copy);
+char* strDup(char* cadena){
+  if(cadena==NULL){
+    return NULL;
+  }
+  int len;
+  len=strlen(cadena)+1;
+  char *copia;
+  copia=(char*) malloc(sizeof(char)*len);
+  for(int i=0;i<len;i++){
+    copia[i]=cadena[i];
+  }
+  return copia;
+
 }
 
-char * copyString(char cadena []){
-  char * newCadena;
-  int len;
-  len=strlen(cadena);
-  newCadena =(char*) malloc(sizeof(char)*len+1);
-  for (int x =0;x<len;x++){
-    newCadena[x]=cadena[x];
-  }
-  int len2= strlen(newCadena);
-  for(int i =0;i<=len;i++){
-    printf("%c",newCadena[i]);
-  }
-  printf("%i",len2);
-  return newCadena;
+int main (int argc, char* argv[]){
+  int len = strlen(argv[1])+1;
+  char *cadena;
+  char* copia;
+  cadena=(char*)malloc(sizeof(char)*len);
+  cadena=argv[1];
+  copia=strDup(cadena);
+  printf("%s",copia);
 }
