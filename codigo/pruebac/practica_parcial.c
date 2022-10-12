@@ -374,3 +374,269 @@ int main(int argc, char*argv[]){
   gauss_sum(&r,n);
   printf("%ld",r);
 }
+
+/*
+3. Escriba un programa que imprima por pantalla la cadena más larga recibida como argumento del mismo. Lo
+siguiente es un ejemplo de ejecución del programa solicitado:
+
+$ ./ej3 uno dos tres "esta es la cadena más larga" "esta no"
+esta es la cadena más larga
+*/
+
+char* longer (int argc,char*argv[]){
+  if(argv==NULL){
+    return NULL;
+  }
+  int index;
+  int max;
+  index=1;
+  max=strlen(argv[1]);
+  for(int x=2;x<argc;x++){
+    int largo= strlen(argv[x]);
+    if(largo>max){
+      max=largo;
+      index=x;
+    }
+  }
+  return argv[index];
+}
+
+
+int main(int argc, char*argv[]){
+  char* cadenita;
+  cadenita=longer(argc,argv);
+  printf("%s",cadenita);
+
+}
+/*4. La función [strdup recibe una cadena de caracteres y devuelve una copia de la misma utilizando memoria
+dinámica. Implemente dicha función, con el siguiente prototipo:
+
+char *strdup(char *);*/
+
+char* strDup(char* cadena){
+  if(cadena==NULL){
+    return NULL;
+  }
+  int len;
+  len=strlen(cadena)+1;
+  char *copia;
+  copia=(char*) malloc(sizeof(char)*len);
+  for(int i=0;i<len;i++){
+    copia[i]=cadena[i];
+  }
+  return copia;
+
+}
+
+int main (int argc, char* argv[]){
+  int len = strlen(argv[1])+1;
+  char *cadena;
+  char* copia;
+  cadena=(char*)malloc(sizeof(char)*len);
+  cadena=argv[1];
+  copia=strDup(cadena);
+  printf("%s",copia);
+}
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+/*inicializar una matriz dinámica con valores random por interfaz, status_t por nombre*,calcular la traza y 
+convertirla en identidad*/
+typedef enum{st_ok,err_inv_val, err_null}status_t;
+
+
+void mat_id(int **mat,const size_t filas, const size_t columnas){
+    if(mat==NULL){
+        return;
+    }
+    if((filas<=0)||(filas!=columnas)){
+        return;
+    }
+    for(int x=0;x<filas;x++){
+        for(int y=0; y<columnas;y++){
+            if(x==y){
+                mat[x][y]=1;
+            }
+            else{
+                mat[x][y]=0;
+            }
+        }
+    }
+    return;
+}
+
+status_t mat_traz(int** mat, const size_t filas, const size_t columnas,int* traza){
+    if ((mat==NULL)||(traza==NULL)){
+        return err_null;
+    }
+    if((filas!=columnas)||(filas<=0)){
+        return err_inv_val;
+    }
+    *traza=mat[0][0];
+    for(int i=1;i<filas;i++){
+        *traza+=mat[i][i];
+    }
+    return st_ok;
+}
+status_t crear_matriz(int *** mat,const size_t filas, const size_t columnas){
+    if((filas<=0)||(columnas<=0)||(filas!=columnas)){
+        return err_inv_val;
+    }
+    *mat=(int**)malloc(sizeof(int*)*filas);
+    if(mat==NULL){
+        return err_null;
+    }
+    for(int i=0; i<filas;i++){
+       (*mat)[i]=(int*)malloc(sizeof(int)*columnas);
+       if((*mat)[i]==NULL){
+            free(*(mat)[i]);
+            return err_null;
+       }
+    }
+    for (int x=0; x<filas;x++){
+        for(int y=0; y<columnas;y++){
+            (*mat)[x][y]=rand()%2;
+        }
+    }
+    return st_ok;
+
+}
+
+
+int main(void){
+    int ** mat;
+    int traza;
+    const size_t filas=10;
+    size_t columnas=10;
+    crear_matriz(&mat,filas,columnas);
+     for (int x=0; x<filas;x++){
+        for(int y=0; y<columnas;y++){
+            printf("%i ",mat[x][y]);
+        }
+        puts("");
+    }
+
+    mat_traz(mat,filas,columnas,&traza);
+    mat_id(mat,filas,columnas);
+       for (int x=0; x<filas;x++){
+        for(int y=0; y<columnas;y++){
+            printf("%i ",mat[x][y]);
+        }
+        puts("");
+    }
+
+    printf("Traza = %i\n",traza);
+
+}
+
+/*LIberar espacio de una matriz dinámica*/
+void free_mat(double*** mat, size_t filas, size_t cols){
+    if(mat!=NULL){
+        if(*mat!=NULL){
+            for(size_t i=0;i<filas;i++){
+                free((*mat)[i]);
+                (*mat)[i]=NULL;
+            }
+        }
+    free(*mat);
+    *mat=NULL;
+    }
+ }
+ /*Hacer una arreglo de estructuras que tenga los datos de 3 estudiantes, 
+su nombre,apellido, numero de telefono y dni y otra estructura con sus notas en literatura y matematica*/
+
+typedef enum{
+    st_ok,
+    err_null,
+    err_inv_val,
+}status_t;
+
+typedef struct notas{
+    int literatura;
+    int matematica;
+};
+
+typedef struct alumno{
+    char *nombre;
+    char *apellido;
+    long numero_tel;
+    struct notas* calif;
+};
+void vector(struct alumno* alumno){
+    struct alumno** arreglo;
+    arreglo[0]=alumno;
+    printf("nombre:%s\n",arreglo[0]->nombre);
+    printf("apellido:%s\n",arreglo[0]->apellido);
+    printf("telefono:%lu\n",arreglo[0]->numero_tel);
+    printf("nota en literatura: %d\n",arreglo[0]->calif->literatura);
+    printf("nota en mate:%i\n",arreglo[0]->calif->matematica);
+
+}
+status_t cargar (void){
+    char nombre[20];
+    char apellido[30];
+    long numero_tel;
+    struct notas* calif;
+    struct alumno alumno1;
+    struct alumno* al1_ptr=&alumno1;
+    al1_ptr=(struct alumno*)malloc(sizeof(struct alumno));
+    al1_ptr->calif=(struct notas*)malloc(sizeof(struct notas));
+    al1_ptr->apellido=(char*) malloc(sizeof(char)*30);
+    al1_ptr->nombre=(char*)malloc(sizeof(char)*20);
+    al1_ptr->apellido=strcpy(apellido,"hofkamp");
+    al1_ptr->nombre=strcpy(nombre,"nataly");
+    al1_ptr->numero_tel=1145789652;
+    al1_ptr->calif->literatura=8;
+    al1_ptr->calif->matematica=9;
+    vector(al1_ptr);
+    }
+    
+
+
+int main(void){
+    cargar();
+}
+
+/* hacer un realloc
+
+aux=(double*)realloc(*dest,(ldest+lsrc)*sizeof(double));
+for(size_t i=0;i<lsrc;i++){
+  aux[i+ldes]=src[i];
+}
+*desr=aux;
+return st_ok;
+
+->>> memcpy(aux +ldest, src, lsrc*sizeof(double));
+
+->>> *dest=aux;
+double *end =&src[lsrc];
+for(aux+=ldest;aux<end;aux++){
+  *aux=*src++;
+}
+*/
+
+typedef struct option {
+    const char* short;
+    const char* long;
+    char* arg;
+    bool processed;
+}option_t;
+
+option_t ops[]={{"-h","--help",NULL,false},
+                {"-w","--width",NULL,false},};
+
+for(int i =1;i<argc;i++){
+    for(opt=0;opt<2;opt++){
+        if(!strcmp(argv[i],ops[opr].short) || !strcmp(argv[i],ops[opt].long)){
+            if(ops[opt].processed){
+                return st_error;
+            }
+        i++;
+        ops[opt].arg=argv[i];
+        ops[opt].processed=true;
+        }
+    }
+}
+
+/* gcc -Wall -pedantic -std=c17 arch.c -o new*/

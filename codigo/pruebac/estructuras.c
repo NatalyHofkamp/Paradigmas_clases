@@ -303,8 +303,7 @@ int main(void){
  usando las demás estructuras. Luego, para acceder a cada uno de los
   campos de las estructuras, escribir una expresión*/
 
-
-struct header {
+struct Header {
     int secuencia;
     time_t stamp;
     char * frame;
@@ -318,14 +317,14 @@ struct cuaternion {
     double qx, qy, qz, qw;
 } quaternion;
 
-struct pose {
+struct Pose {
     struct punto * posicion;
     struct cuaternion * orientacion;
 } pose;
 
 struct pose_stamped {
-    struct header * encabezado;
-    struct pose * pose;
+    struct Header * encabezado;
+    struct Pose * pose;
 } robot_pose, * robot_pose_ptr;
 
 struct pose_stamped* cargar (struct pose_stamped* robot){
@@ -341,8 +340,97 @@ struct pose_stamped* cargar (struct pose_stamped* robot){
   robot->pose->orientacion->qw=22771.2929;
   return robot;
 }
+
 int main(void){
-  robot_pose_ptr=&robot_pose;
-  cargar (robot_pose_ptr);
-  printf("%s y posicion en x:%f",robot_pose.encabezado->frame, robot_pose.pose->posicion->x);
+    robot_pose_ptr=&robot_pose;
+    robot_pose_ptr=(struct pose_stamped*)malloc(sizeof(struct pose_stamped));
+    robot_pose_ptr->encabezado=(struct Header*)malloc(sizeof(struct Header));
+    robot_pose_ptr->pose=(struct Pose*)malloc(sizeof(struct Pose));
+    robot_pose_ptr->encabezado->frame=(char*)malloc((sizeof(char))*50);
+    robot_pose_ptr->pose->posicion=(struct punto*) malloc(sizeof(struct punto));
+    robot_pose_ptr->pose->orientacion=(struct cuaternion*)malloc(sizeof(struct cuaternion));
+    cargar (robot_pose_ptr);
+    printf("%s y posicion en x:",robot_pose_ptr->encabezado->frame);
+}
+
+/*********************pruewba juego*************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct juego{
+    int codigo;
+    float precio;
+}juego;
+
+typedef struct {
+    juego* primer_juego;
+    int cant;
+}coleccion;
+
+struct coleccion* new_juego (int cant,struct coleccion** mi_coleccion,struct coleccion* pointer){
+    int cod;
+    float precio;
+    puts("dale ingresa los datos del juego");
+    puts("codigo:");
+    scanf("%i",&cod);
+    scanf("%*[^\n]%*c");
+    puts("precio:");
+    scanf("%f",&precio);
+
+    pointer->cant=cant;
+    pointer->primer_juego->codigo=cod;
+    pointer->primer_juego->precio=precio;
+    mi_coleccion[cant]=pointer;
+}
+
+void ver(int cant,struct coleccion** mi_coleccion){
+    for(int i=0;i<cant;i++){/*los valores se intercambian*/
+        printf("cod:%d, precio:%.2f\n ",mi_coleccion[i]->primer_juego->codigo,
+                                        mi_coleccion[i]->primer_juego->precio);
+    }
+}
+int main(void){
+    int cant=0;
+    struct coleccion col;
+    struct coleccion* col_ptr=&col;
+    col_ptr=(struct coleccion*)malloc(sizeof(struct coleccion));
+    col_ptr->primer_juego=(struct juego*)malloc(sizeof(struct juego));
+    struct coleccion** mi_coleccion;
+    mi_coleccion = (struct coleccion**)malloc(sizeof(struct coleccion*));
+    int opt;
+    do{
+    puts("juego nuevo?");
+    puts("1.si");
+    puts("2.ver");
+    puts("3.ñao");
+    scanf("%i",&opt);
+    switch(opt){
+        case 1: new_juego(cant,mi_coleccion,col_ptr);
+                cant++;
+                break;
+        case 2: ver(cant,mi_coleccion);break;
+        case 3: puts("bueno bye");
+                break;
+        default: puts("ingresa 1 o 2, no es tan dificil");
+                 break;
+    }}while(opt!=3);
+    return 0;
+}
+
+/*************************************************************************************************/
+typedef struct juego{
+    int codigo;
+    float precio;
+}juego;
+int main(void){
+    struct juego juego1;
+    struct juego* juego1_ptr;
+    juego1_ptr=&juego1;
+    struct juego* arreglo;
+    struct juego ** matriz;
+    arreglo[0]=juego1;
+    matriz[0]=&juego1;
+
+
 }
