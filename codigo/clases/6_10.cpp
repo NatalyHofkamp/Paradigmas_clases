@@ -34,9 +34,10 @@ int main(void){
     std::cout<<value;
     return 0;
     }
-*/
 
-/* Indicar que una variable es estática. */
+#### ERROR #####
+-> Indicar que una variable es estática. 
+
 int increment (void){
     int counter=0;
     std::cout<<counter++<<std::endl;
@@ -44,7 +45,8 @@ int increment (void){
 }
 
 int static_increment (void){
-    static int counter=0;
+    static int counter=0;/-> se guarda el valor que tiene hasta el próximo 
+                            llamado(mantiene su valor)
     std::cout<<counter++<<std::endl;
 
 }
@@ -55,4 +57,22 @@ int main(void){
     static_increment();
     static_increment();
 
+}
+
+-> se pueden poner valores por omisión.
+
+std::string Greet (const std::string &whom ="wold"){
+    return "helloo"+ whom +"!";
+
+
+-> diccionarios en c++
+
+std::map <std::string,int> NonAutoFunction (void){
+    std::map<std::string,int> var ={{"a",1},{"b",2},{"c",3}};
+    return var;
+}
+auto AutoFunction (void){
+    std::map<std::string,int> var ={{"a",1},{"b",2},{"c",3}};
+    return var;
+}
 }

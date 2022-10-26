@@ -1,50 +1,47 @@
 #include <iostream>
-#include <string>
-#include <cstdlib>
-#include <time.h>
 
-/*pasar una cadena y cambiarla en otra función*/
+class Vehicle
+{
+  public:
+    std::string brand;
+    void bocina();
+};
 
-typedef enum{
-    st_ok,
-    err_inv_val,
-    err_null,
-}status_t;
+class Transporte
+{
+    protected:
+        int asientos;
 
-namespace mi_espacio{
-    char* cadenita;
-    int numerito;
+};
+
+void Vehicle::bocina(void){
+    std::cout<<"pip pip"<<std::endl;
 }
 
-status_t cambiar(std::string &cadena){
-    int len= cadena.size();
-    srand(time(NULL));
-    int x=std::rand();
-    std::string cambio=std::to_string(x);
-    cadena=cambio;
-    return status_t::st_ok;
-}
+class Car:public Vehicle
+{
+  public:
+    std::string mod_;
 
+};
 
-int main(){
-    std::string cadena ="hola";
-    mi_espacio::numerito=12;
-    mi_espacio::cadenita="mmi cadeNiTa";
-    std::cout<<mi_espacio::cadenita<< std::endl<<"numero:"<<mi_espacio::numerito<<std::endl;
-    std::cout<<"cadena en main:"<<cadena<<std::endl;
-    cambiar(cadena);
-    std::cout<<"cadena desp de la función"<<cadena<<std::endl;
-    std::cout<<"te gustó el juego?"<<std::endl;
-    std::string resp;
-    std::cin>>resp;
-    if((resp=="NO")||(resp=="no")){
-        std::cout<<"bueno, tu problema"<<std::endl;
-        return status_t::err_inv_val;
+class Mcqueen:public Car,public Transporte{
+  public:
+    std::string color="rojo";
+    void setAss(int num){
+        asientos=num;
     }
-    else{
-        std::cout<<"me alegro :)"<<std::endl;
-        return status_t::st_ok;
-         }
+    int getAss(){
+        return asientos;
+    }
+};
 
 
+int main(void){
+    Mcqueen car1;
+    car1.brand="fiat";
+    car1.mod_="palio";
+    car1.bocina();
+    car1.setAss(4);
+    std::cout<<car1.color<<std::endl<<car1.getAss()<<std::endl;
 }
