@@ -1,35 +1,48 @@
-/*Escribir una función reciba un vector de triplas donde cada tripla
-(tupla con 3 elementos) tiene la forma (string, string, int) representando 
-que una persona le debe a otra un monto de dinero (ej: <”Juan”, “Ilaria”, 200>
-indica que Juan le debe a Ilaria 200 pesos). La función debe devolver un vector
-con los nombres de las personas que deben mas de lo que les deben.*/
-
 #include <iostream>
 #include <vector>
-#include <tuple>
 
 using namespace std;
 
-auto deben (vector<tuple<string,string,int>> vec)
-{
-    vector<string> nombres;
-    for(size_t i=0; i<vec.size(); i++){
-        if (find(nombres.begin(), nombres.end(), get<0>(vec[i])) == nombres.end()) {
-            nombres.emplace_back(get<0>(vec[i]));
-            cout<<get<0>(vec[i])<<endl;
-            }
+class clase{
+    public:
+    int val;
+    vector<int> vec;
+    clase(int v){
+        this->val=v;
     }
+    clase(){}
+    ~clase(){}
+    clase operator+(clase &a){
+        clase nu(this->val + a.val);
+        return nu;
+    }
+    clase operator-(clase&a){
+        clase nue=(this->val - a.get_val());
+        return nue;
+    }
+
+    friend ostream& operator << (ostream& os,const clase& este);
+    int&  operator [] (int index){
+        return vec[index];
+    }
+    void operator - (int val){
+        vec.emplace_back(val);
+    }
+    int get_val(){return val;}
+};
+ostream& operator <<(ostream& os, const clase &a){
+    os<<a.val<<endl;
+    return os;
 }
 
-int main(void)
-{
-    vector<tuple<string,string,int>> vec;
-    vec.emplace_back(make_tuple("juan","maria",200));
-    vec.emplace_back(make_tuple("cristian","juan",150));
-    vec.emplace_back(make_tuple("cristian","marta",150));
-    vec.emplace_back(make_tuple("marta","juan",200));
-    vec.emplace_back(make_tuple("marta","maria",350));
-    vec.emplace_back(make_tuple("maria","marta",350));
-    deben(vec);
-    
+int main(void){
+    clase a(2);
+    clase b(3);
+    clase c=a+b;
+    cout<<c.get_val()<<endl;
+    clase d= c-a;
+    cout<<d;
+    c-3;
+    cout<<c[0]<<endl;
+
 }
