@@ -7,6 +7,30 @@ using namespace std;
 /* portfolios-> puede tener varias cuentas u otros portfolios
 
 tengo que poder consultar el balance del portofolio y hacer report*/
+class Report {
+  protected:
+    vector<string>  report;
+  public:
+    virtual void addDeposit( Deposit* aDeposit ) {};
+    virtual void addWithdraw( Withdraw* aWithdraw ) {};
+    virtual void addPortfolio( Portfolio* anAccountable ) {};
+    virtual void addAccount( Account* anAccountable ) {};
+
+    vector<string> reportFor( Accountable &); 
+};
+class DetailedReport : public Report {
+  public:
+    void addDeposit( Deposit* aDeposit );
+    void addWithdraw( Withdraw* aWithdraw );
+    void addPortfolio( Portfolio* anAccountable );
+    void addAccount( Account* anAccountable );
+};
+class HeadersReport : public Report {
+  public:
+    void addPortfolio( Portfolio* anAccountable );
+    void addAccount( Account* anAccountable );
+};
+
 // header
 class Accountable {
     public: 
@@ -101,30 +125,74 @@ vector<string> Account::report(){
     }
     return report;
 }
-
-int main(void) {
+void testAccount() {
     Account *cuenta = new Account();
     assert( cuenta->balance() == 0 );
     
     cuenta->deposit( 10 );
     assert( cuenta->balance() == 10 );
-    assert( cuenta->report().front() == "deposito de 10" );
-    assert( cuenta->report().size() == 1 );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).front() == "Cuenta: (10)" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).back() == "deposito de 10" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).size() == 2 );
 
     cuenta->withdraw( 10 );
     assert( cuenta->balance() == 0 );
-    assert( cuenta->report().front() == "deposito de 10" );
-    assert( cuenta->report().back() == "retiro de 10" );
-    assert( cuenta->report().size() == 2 );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).front() == "Cuenta: (0)" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).back() == "retiro de 10" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).size() == 3 );
     cuenta->withdraw( 10 );
     assert( cuenta->balance() == 0 );
-    assert( cuenta->report().front() == "deposito de 10" );
-    assert( cuenta->report().back() == "retiro de 10" );
-    assert( cuenta->report().size() == 2 );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).front() == "Cuenta: (0)" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).back() == "retiro de 10" );
+    assert( ((new DetailedReport())->reportFor(*cuenta)).size() == 3 );
 
-    cout << "ok " << std::endl;
+    cout << "Account ok " << endl;
+    delete cuenta;
+}
+
+int main(void) {
+    testAccount();
+    Portfolio *portfolio = new Portfolio();
+    assert( portfolio->balance() == 0 );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).front() == "Portfolio: (0)" );
+
+    Account *cuenta = new Account();
+    cuenta->deposit( 10 );
+    portfolio->add( cuenta );
+    assert( portfolio->balance() == 10 );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).front() == "Portfolio: (10)" );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).back() == "deposito de 10" );
+
+    Portfolio *inner = new Portfolio();
+    Account *other = new Account();
+    other->deposit( 5 );
+    inner->add( other );
+    portfolio->add( inner );
+    assert( portfolio->balance() == 15 );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).front() == "Portfolio: (15)" );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).back() == "deposito de 5" );
+
+    other->withdraw(3);
+    assert( portfolio->balance() == 12 );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).front() == "Portfolio: (12)" );
+    assert( ((new DetailedReport())->reportFor(*portfolio)).back() == "retiro de 3" );
+
+    Portfolio *sub = new Portfolio();
+    Account *subOther = new Account();
+    subOther->deposit( 15 );
+    sub->add( subOther );
+    inner->add( sub );
+
+    cout << endl << *portfolio << endl;
+
+    cout << "Portfolio ok " << endl;
 
     delete cuenta;
+    delete portfolio;
+    delete inner;
+    delete other;
+    delete sub;
+    delete subOther;
 
     return 0;
 }

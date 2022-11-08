@@ -4,6 +4,29 @@
 #include <vector>
 using namespace std;
 
+class Report {
+  protected:
+    vector<string>  report;
+  public:
+    virtual void addDeposit( Deposit* aDeposit ) {};
+    virtual void addWithdraw( Withdraw* aWithdraw ) {};
+    virtual void addPortfolio( Portfolio* anAccountable ) {};
+    virtual void addAccount( Account* anAccountable ) {};
+
+    vector<string> reportFor( Accountable &); 
+};
+class DetailedReport : public Report {
+  public:
+    void addDeposit( Deposit* aDeposit );
+    void addWithdraw( Withdraw* aWithdraw );
+    void addPortfolio( Portfolio* anAccountable );
+    void addAccount( Account* anAccountable );
+};
+class HeadersReport : public Report {
+  public:
+    void addPortfolio( Portfolio* anAccountable );
+    void addAccount( Account* anAccountable );
+};
 // headers
 class Transaction {/*no existe en la vida real, es conceptual-> abstracto 
                     (no tiene sentido instanciarlo)*/
@@ -43,7 +66,7 @@ class Account: public Accountable {
 int balance();
     void deposit( int amount );
     void withdraw( int amount );
-    vector<string> affectReport( vector<string> & ); 
+    vector<string> affectReport(); 
 };
 class Portfolio : public Accountable {
   private:
