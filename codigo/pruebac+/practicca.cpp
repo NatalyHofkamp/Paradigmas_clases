@@ -1,222 +1,144 @@
+/*juego para almacenar juegos,de terror, de aventura, online*/
 #include <iostream>
-#include <tuple>
-#include <chrono>
-#include <ctime>
 #include <vector>
-class Medicion{
-    protected:
-      std::chrono::system_clock::time_point fecha;
-      virtual void stamp(void) {//se actualiza y establece la fecha
-        this->fecha = std::chrono::system_clock::now();
+
+class Juego{
+  protected:
+    int codigo;
+    float precio;
+    std::string nombre;
+  public:
+    Juego(int codigo, float precio,std::string nombre){
+        this->codigo=codigo;
+        this->precio=precio;
+        this->nombre=nombre;
+        std::cout<<"Juego()"<<std::endl;
     }
-    public:
-        Medicion(){
-            stamp();//siempre que se instancia una medición-> se llama al método
+    virtual ~Juego(){}
+    std::string getNombre(){return this->nombre;}
+    virtual void PrintInfo()=0;
+};
+
+class Terror: public Juego{
+  private:
+    std::string categoria;
+  public:
+    Terror(int codigo, float precio,std::string nombre,std::string categoria):Juego(codigo,precio,nombre){
+        this->categoria=categoria;
+        std::cout<<"Terror()"<<std::endl;
+    }
+    ~Terror(){}
+    void PrintInfo(){
+        std::cout<<this->nombre<<":"<<std::endl;
+        std::cout<<"categoría: "<<this->categoria<<std::endl;
+        std::cout<<"precio: "<<this->precio<<std::endl;
+        std::cout<<"codigo: "<< this->codigo<<std::endl;
+    }
+};
+
+class Aventura :public Juego{
+  private:
+    int duracion;
+  public:
+    Aventura(int codigo, float precio,std::string nombre,int duracion):Juego(codigo,precio,nombre){
+        std::cout<<"aventura"<<std::endl;
+        this->duracion=duracion;
+    }
+    ~Aventura(){}
+    void PrintInfo(){
+         std::cout<<this->nombre<<":"<<std::endl;
+        std::cout<<"duracion: "<<this->duracion<<"hs"<<std::endl;
+        std::cout<<"precio: "<<this->precio<<std::endl;
+        std::cout<<"codigo: "<< this->codigo<<std::endl;
+    }
+};
+
+class Coleccion{
+  private:
+    std::vector<Juego*> stock;
+  public:
+    Coleccion(){}
+    Coleccion(Coleccion* other){
+        std::cout<<"coleccion()"<<std::endl;
+        this->stock=other->stock;
+    }
+    ~Coleccion(){
+        for(auto& juego:stock){
+            delete juego;
         }
-        ~Medicion(){}
-        virtual void getMed()=0;
-};
-
-
-class GpsMed:public Medicion{
-    int x,y,z;
-    public:
-    GpsMed(int x,int y, int z){
-        this->x=x;
-        this->y=y;
-        this->z=z;
+        std::cout<<"~Coleccion()"<<std::endl;
     }
-    ~GpsMed(){}
-    void getMed ()override{
-        std::cout<<"GPS"<<std::endl;
-        std::time_t stamp = std::chrono::system_clock::to_time_t(fecha);
-        std::cout << std::ctime(&stamp) << "\t";
-        std::cout<< "coordenadas-> ("<<x<<","<<y<<","<<z<<")"<<std::endl;
+    void Agregar(Juego* juego){
+        stock.emplace_back(juego);
+        std::cout<<"comprado"<<std::endl;
     }
-};
-
-class LidarMed: public Medicion{
-    std::vector<double> distancias;
-    public:
-    LidarMed(std::vector<double> dist){
-       this-> distancias=dist;
-    }
-    ~LidarMed(){}
-     void getMed() override{
-        int i=0;
-        std::cout<<"LIDAR"<<std::endl;
-        std::time_t stamp = std::chrono::system_clock::to_time_t(fecha);
-        std::cout << std::ctime(&stamp) << "\t";
-        for(const auto& dist:distancias){
-            std::cout<< "distancia "<<i<<"-> "<<dist<<std::endl;
-            i++;
+    void PrintColec(){
+        for(const auto& juego :this->stock){
+            juego->PrintInfo();
         }
     }
-};
-
-
-class CamaraMed:public Medicion{
-    std::vector<std::vector<int>> img;
-    int row;
-    int col;
-    public:
-    CamaraMed(int row,int col,std::vector<std::vector<int>> img){
-        this->row=row;
-        this->col=col;
-        this->img=img;
-    }
-    ~CamaraMed(){}
-    void getMed () override{
-        std::cout<<"CAMARA"<<std::endl;
-        std::time_t stamp = std::chrono::system_clock::to_time_t(fecha);
-        std::cout << std::ctime(&stamp) << "\t";
-        for(const auto& row:img){
-            for(const auto&col :row){
-                std::cout<< "col";
+    void Vender(std::string nombre){
+        for(size_t i=0; i<stock.size();i++){
+            if((stock[i]->getNombre())==nombre){
+                stock.erase(stock.begin()+i);
             }
         }
     }
-};
 
-class Sensores{
-    public:
-    ~Sensores(){}
-    virtual Medicion* Medir()=0;
-    virtual void getMed(){};
-};
-
-
-class Lidar : public Sensores{
-    double anguloApertura;
-    double resolucion;
-    public:
-    Lidar(double anguloApertura, double resolucion){
-        this->anguloApertura=anguloApertura;
-        this->resolucion=resolucion;
-    }
-    Lidar(const Lidar& copy){
-        this->anguloApertura=copy.anguloApertura;
-        this->resolucion=copy.resolucion;
-    }
-    ~Lidar(){}
-    Medicion* Medir()override{
-        std::cout<<"Lidar midiendo...";
-        std::vector<double> dist(anguloApertura/resolucion);
-        LidarMed* medi= new LidarMed(dist);
-        return medi;
-    };
-    bool operator ==(const Lidar& other){
-        if(this->anguloApertura ==other.anguloApertura &&this->resolucion==other.resolucion){
+    bool operator== (Coleccion* other){
+        if (this->stock== other->stock){
             return true;
         }
-        else{
-            return false;
-        }
-    }
-    Lidar& operator= (const Lidar& other){
-        this->anguloApertura=other.anguloApertura;
-        this->resolucion=other.resolucion;
-        return *this;
+        else return false;
     }
     
 };
-class Camara:public Sensores{
-    int fil;
-    int col;
-    public:
-        Camara(int fil, int col){
-            this->fil=fil;
-            this->col=col;
-        }
-        ~Camara(){}
-        Medicion* Medir()override{
-            std::cout<<"CAmara midiendo...";
-            std::vector<std::vector<int>> img(fil);
-            for(size_t i=0;i<fil;i++){
-                img[i].reserve(col);
-                for(size_t j=0;j<col;j++){
-                    img[i][j]='f';
-                }
-            }
-            CamaraMed* medi= new CamaraMed(this->fil,this->col,img);
-            return medi;
-        }
-        
-        void operator= (const Camara& copy){
-            this-> fil=copy.fil;
-            this->col=copy.col;
-        }
-        bool operator == (const Camara& copy){
-            if (this->fil==copy.fil && this->col==copy.col){
-                return true;
-            }
-            else{
-                return false;
-            }
-        } 
-};
 
-
-class GPS:public Sensores{
-    std:: tuple<int,int,int> posicion;
-    double precision;
-    public:
-        GPS(int x,int y,int z, double precision){
-            posicion=std::make_tuple(x,y,z);
-            this->precision=precision;
-        }
-        GPS(const GPS& copy){
-            posicion=copy.posicion;
-            this->precision=copy.precision;
-        }
-        ~GPS(){}
-        Medicion* Medir()override{
-            std::cout<<"GPs midiendo...";
-            GpsMed* medi= new GpsMed(std::get<0>(posicion),std::get<1>(posicion),std::get<2>(posicion));
-            return medi;
-        }
-        void operator=(const GPS& copy){
-            this-> posicion=copy.posicion;
-            this->precision=copy.precision;
-        }
-        bool operator == (const GPS& copy){
-            if (posicion ==copy.posicion &&precision==copy.precision){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-
-
-};
-
-class AutoAutonomo{
-    std::vector<Sensores*> sensores;
-    public:
-    AutoAutonomo(){}
-    ~AutoAutonomo(){}
-    void registro(void){
-        for(const auto& sensor: this->sensores){
-            std::cout<<"MIDIENDO,,,"<<std::endl;
-            Medicion* med= sensor->Medir();
-            med->getMed();
-            delete med;
-        }
+class Gamer{
+    std::string nombre;
+    Coleccion* coleccion;
+  public:
+    Gamer(std::string nombre){
+        std::cout<<"Gamer()"<<std::endl;
+        this->nombre=nombre;
     }
-    void add(Sensores* sens){
-        sensores.emplace_back(sens);
+    Gamer( const Gamer* other){
+        this->nombre=other->nombre;
+        this->coleccion=other->coleccion;
+    }
+    ~Gamer(){}
+    void ComprarJuego(Juego* juego){
+        std::cout<<"comprando..."<<std::endl;
+        coleccion->Agregar(juego);
+    }
+    void venderJuego(std::string nombre){
+        coleccion->Vender(nombre);
+    }
+    void verJuegos(){
+        coleccion->PrintColec();
+    }
+    bool operator == (Gamer* other){
+        if (this->coleccion == other->coleccion){
+            return true;
+        }
+        else return false;
+    }
+    void operator = (Gamer* other){
+        this->nombre=other->nombre;
+        this->coleccion=other->coleccion;
     }
 };
 
-int main(void){
-    Camara* camara =new Camara(10,10);
-    GPS* gps =new GPS(3,5,6,18.90);
-    Lidar* lidar= new Lidar (23.45,22.98);
-    AutoAutonomo* autito= new AutoAutonomo();
-    autito->add(camara);
-    autito->add(gps);
-    autito->add(lidar);
-    autito->registro();
-    
+int main (void){
+    Gamer* uno= new Gamer("Pablito");
+    Gamer* dos= new Gamer("Maria");
+    Aventura* Minecraft= new Aventura(23345, 2093.049, "Minecraft",720);
+    Terror* Slenderman = new Terror(26545, 2.049, "Slenderman","+16");
+    uno->ComprarJuego(Minecraft);
+    uno->ComprarJuego(Slenderman);
+   // std::cout<<"son iguales?->"<<(uno==dos);
+    uno->verJuegos();
+    dos=uno;
+    dos->verJuegos();
+    std::cout<<"son iguales?->"<<(uno==dos);
 }
